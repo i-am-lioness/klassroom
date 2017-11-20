@@ -1,0 +1,12 @@
+/node_modules
+
+.env
+
+*.log
+
+to-do.txt
+
+/out
+/dist
+/coverage
+/.nyc_output
