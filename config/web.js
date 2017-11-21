@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const DEV = path.resolve(__dirname, '../react');
-const OUTPUT = path.resolve(__dirname, '../web');
+const OUTPUT = path.resolve(__dirname, '../out');
 
 module.exports = env => (
   {
@@ -14,7 +14,7 @@ module.exports = env => (
       extensions: ['.js', '.jsx'],
     },
     output: {
-      filename: '[name].bundle.js',
+      filename: '[name].web.bundle.js',
       path: OUTPUT,
     },
     module: {

@@ -560,7 +560,14 @@
     <!-- Custom scripts for this template -->
     <script src="js/freelancer.min.js"></script>
 
-    <script src="../out/folder.bundle.js"> </script>
+    <!--script src="../out/folder.bundle.js"> </script-->
+    <script>
+      if (window && window.process && window.process.type) {
+        $.getScript('../out/folder.bundle.js');
+      } else {
+        $.getScript('js/folder.web.bundle.js')
+      }
+    </script>
 
   </body>
 
