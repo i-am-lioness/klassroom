@@ -12,7 +12,7 @@ preLoadFolderContent().then((fm) => {
     <FolderContent
       folderMap={folderMap}
     />,
-    document.getElementById('root')
+    document.getElementById('fileDisplay')
   );
 });
 

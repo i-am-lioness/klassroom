@@ -6,10 +6,11 @@ import FolderContent from './components/folder-content';
 import { preLoadFolderContent } from './klassroom-util';
 
 const remote = require('electron').remote;
-// const app = require('electron').remote.app;
+const app = remote.app;
 
 const electronFs = remote.require('fs');
-// const path = require('path');
+const path = remote.require('path');
+const ncp = remote.require('ncp').ncp;
 
 let folderMap;
 
@@ -18,19 +19,43 @@ function saveFolderMap(e) {
 
   const content = JSON.stringify(folderMap);
 
-  // const fileName = path.resolve(app.getPath(), 'folderMap2.json');
-  const fileName = './web/folderMap2.json';
+  const appPath = app.getAppPath();
+  const tempPath = app.getPath('temp');
+  console.log(appPath);
+  console.log(tempPath);
 
-  electronFs.writeFile(fileName, content, 'utf8', function (err) {
+  let source = path.resolve(appPath, 'app');
+  const tempWebsite = path.resolve(tempPath, 'website');
+
+  ncp(source, tempWebsite, function (err) {
     if (err) {
-      return console.log(err);
+      return console.error(err);
     }
-
-    console.log(`The file was saved at '${fileName}'`);
-    push('./web', 'https://github.com/nnennaude/chem_class0.git', function() {
-      console.log('pushed to github');
+    console.log(`copied html to '${tempWebsite}'`);
+    
+    source = path.resolve(appPath, 'out/folder.web.bundle.js');
+    const destination = path.resolve(tempWebsite, 'js/folder.web.bundle.js');
+    ncp(source, destination, function (err) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log(`copied ${source} to '${destination}'`);
+    
+      const fileName = path.resolve(tempWebsite, 'folderMap2.json');
+    
+      electronFs.writeFile(fileName, content, 'utf8', function (err) {
+        if (err) {
+          return console.log(err);
+        }
+    
+        console.log(`The file was saved at '${fileName}'`);
+        push(tempWebsite, 'https://github.com/nnennaude/chem_class1.git', function() {
+          console.log('pushed to github');
+        });
+      });
     });
-  });
+   });
+
 }
 
 preLoadFolderContent().then((fm) => {
