@@ -1,72 +1,49 @@
-/* eslint-env browser */
-/* global $ */
 
-/*
-let getFolderContent;
-
-if (window && window.process && window.process.type) {
-  const API_KEY = 'AIzaSyAZoi72Rr-ft3ffrgJ9gDZ-O5_fyVNDe_k';
-  getFolderContent = (id) => {
-    const query = {
-      q: `'${id}' in parents`,
-      key: API_KEY,
-    };
-
-    return new Promise((resolve, reject) => {
-      $.get('https://www.googleapis.com/drive/v3/files', query)
-        .then((response) => {
-          if (response) {
-            resolve(response.files);
-          } else {
-            reject(new Error('Video data not found.'));
-          }
-        });
-    });
-  };
-} else {
-  */
 const API_KEY = 'AIzaSyAZoi72Rr-ft3ffrgJ9gDZ-O5_fyVNDe_k';
 const ROOT_FOLDER_ID = '1jhCLoVcxO0wD7MKZ4jtEtF6qCxixGo5c';  
 
-function callGAPI(id) {
+let folderMap;
+
+function getFileTreeFromGAPI(id, cb) {
   const query = {
     q: `'${id}' in parents`,
     key: API_KEY,
   };
 
-  return new Promise((resolve, reject) => {
-    $.get('https://www.googleapis.com/drive/v3/files', query)
-      .then((response) => {
-        if (response) {
-          resolve(response.files);
-        } else {
-          reject(new Error('folder data not found.'));
-        }
-      });
-  });
-}
+  $.get('https://www.googleapis.com/drive/v3/files', query)
+    .then((response) => {
+      if (response) {
+        const files = response.files;
+        folderMap[id] = files;
 
-let folderMap;
+        let returns = -1;
+      
+        function onTraversalComplete() {
+          returns +=1;
 
-function getFullFolder(fileID) {
-  return callGAPI(fileID).then((files) => {
-    folderMap[fileID] = files;
+          if(returns >= files.length) return cb();
 
-    const p = [];
-    files.forEach((f) => {
-      if (f.mimeType === 'application/vnd.google-apps.folder') {
-        p.push(getFullFolder(f.id));
+          const f = files[returns];
+          if (f.mimeType === 'application/vnd.google-apps.folder') {
+            getFileTreeFromGAPI(f.id, onTraversalComplete);
+          } else {
+            onTraversalComplete();
+          }
+          
+        };
+
+        onTraversalComplete();
+      
+      } else {
+        throw (new Error('folder data not found.'));
       }
     });
-    return Promise.all(p);
-  });
 }
 
 function loadDirectoryListing() {
   folderMap = {};
-  return getFullFolder(ROOT_FOLDER_ID).then(() => {
-    // console.log(folderMap);
-    return folderMap;
+  return new Promise((resolve, reject) => {
+    getFileTreeFromGAPI(ROOT_FOLDER_ID, () => { resolve(folderMap); })
   });
 }
 
@@ -79,24 +56,15 @@ function chooseSource() {
   }
 }
 
-function loadFoldersIfNeeded() {
+function preLoadFolderContent() {
   return chooseSource().then((data) => {
     folderMap = data;
     return folderMap;
   });
 }
-/*
-function getFolderContent(id) {
-  if (Object.prototype.hasOwnProperty.call(folderMap, id)) {
-    const files = folderMap[id];
-    return Promise.resolve(files);
-  }
-  return Promise.reject(new Error(`Folder '${id}' not found.`));
-}
-*/
+
 const ki = {
-  // getFolderContent,
-  preLoadFolderContent: loadFoldersIfNeeded,
+  preLoadFolderContent,
 };
 
 module.exports = ki;
