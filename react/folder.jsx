@@ -39,13 +39,13 @@ preLoadFolderContent().then((fm) => {
     <FolderContent
       folderMap={folderMap}
     />,
-    document.getElementById('root')
+    document.getElementById('fileDisplay')
   );
 
   const element = <button onClick={saveFolderMap} >Publish</button>;
   ReactDOM.render(
     element,
-    document.getElementById('btn')
+    document.getElementById('publisher')
   );
 });
 
