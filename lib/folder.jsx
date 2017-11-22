@@ -12,12 +12,10 @@ const electronFs = remote.require('fs');
 const path = remote.require('path');
 const ncp = remote.require('ncp').ncp;
 
-let folderMap;
 
-function saveFolderMap(e) {
-  e.preventDefault();
+function saveFolderMap(fm) {
 
-  const content = JSON.stringify(folderMap);
+  const content = JSON.stringify(fm);
 
   const appPath = app.getAppPath();
   const tempPath = app.getPath('temp');
@@ -58,6 +56,8 @@ function saveFolderMap(e) {
 
 }
 
+let folderMap;
+
 preLoadFolderContent().then((fm) => {
   folderMap = fm;
   ReactDOM.render(
@@ -67,7 +67,15 @@ preLoadFolderContent().then((fm) => {
     document.getElementById('fileDisplay')
   );
 
-  const element = <button onClick={saveFolderMap} >Publish</button>;
+  const element = (
+    <button
+      type="button"
+      className="btn btn-primary btn-lg btn-block"
+      onClick={ e => { e.preventDefault(); saveFolderMap(folderMap); }}
+    >
+      Publish
+    </button>);
+
   ReactDOM.render(
     element,
     document.getElementById('publisher')
