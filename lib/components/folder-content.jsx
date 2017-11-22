@@ -23,12 +23,23 @@ class FolderContents extends React.Component {
     this.eachFile = this.eachFile.bind(this);
     this.eachLevel = this.eachLevel.bind(this);
     this.navToFolder = this.navToFolder.bind(this);
+    this.init = this.init.bind(this);
 
     this.currentLine = null;
   }
 
-  componentDidMount() {
-    this.navToFolder({ id: ROOT_FOLDER, name: 'Resources' }, -1);
+  componentDidMount(){
+    this.init();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!Object.prototype.hasOwnProperty.call(prevProps.folderMap, ROOT_FOLDER)) this.init();
+  }
+
+  init(){
+    if (Object.prototype.hasOwnProperty.call(this.props.folderMap, ROOT_FOLDER)) {
+      this.navToFolder({ id: ROOT_FOLDER, name: 'Resources' }, -1);
+    } 
   }
 
   navigate(data, e, level) {

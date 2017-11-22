@@ -68,7 +68,6 @@
         <hr class="star-primary">
         <div class="row">
           <div class="col-sm-12 portfolio-item">
-            <button type="button" class="btn btn-primary btn-lg btn-block" href="#portfolioModal1" data-toggle="modal"> Publish </button>
             <div id="fileDisplay"></div>
           </div>
         </div>
@@ -235,7 +234,7 @@
     </div>
 
     <!-- Portfolio Modals -->
-    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+    <!--div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="close-modal" data-dismiss="modal">
@@ -260,7 +259,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div-->
     <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -482,10 +481,22 @@
       </div>
     </div>
     
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>    
+    
 
     <!-- Bootstrap core JavaScript -->
-    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>    
     <script src="vendor/jquery/jquery.min.js"></script>
+
+
+
+    <script>
+        if (window && window.process && window.process.type) {
+          $.getScript('../out/folder.bundle.js');
+        } else {
+          $.getScript('js/folder.web.bundle.js')
+        }
+    </script>
+
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Plugin JavaScript -->
@@ -498,13 +509,7 @@
     <!-- Custom scripts for this template -->
     <script src="js/freelancer.min.js"></script>
 
-    <script>
-      if (window && window.process && window.process.type) {
-        $.getScript('../out/folder.bundle.js');
-      } else {
-        $.getScript('js/folder.web.bundle.js')
-      }
-    </script>
+    
 
   </body>
 
