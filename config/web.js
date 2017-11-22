@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 
-const DEV = path.resolve(__dirname, '../react');
+const DEV = path.resolve(__dirname, '../lib');
 const OUTPUT = path.resolve(__dirname, '../out');
 
 module.exports = env => (
