@@ -82,43 +82,50 @@ class FolderContents extends React.Component {
       </a>);
 
     if (file.mimeType === 'application/vnd.google-apps.folder') {
-      contentLink = (
-        <button
-          className="folder-content-item"
-          onClick={(e) => { this.navigate(file, e, -1); }}
-        >
-          {file.name}
-        </button>);
+      contentLink = file.name;
     }
 
-    return (<p
-      className="folder-content-row"
+    return (<button
+      type="button" 
+      className="folder-content-item list-group-item list-group-item-action"
+      onClick={(e) => { this.navigate(file, e, -1); }}
       key={file.id}
       onMouseEnter={(e) => { this.hoverStart(idx, e); }}
     >
       {contentLink}
-    </p>);
+    </button>);
   }
 
   eachLevel(file, idx) {
     return (
-      <span key={file.id}>
-        <button
+      <li key={file.id} className="breadcrumb-item">
+        <a
+          href="#"
           onClick={(e) => { this.navigate(file, e, idx); }}
         >
           {file.name}
-        </button>
-        {'\u002f'}
-      </span>);
+        </a>
+      </li>);
   }
 
   render() {
     const rowDisplay = this.state.files.map(this.eachFile);
     const path = this.state.path.map(this.eachLevel);
 
-    return (<div id="lyricsDisplay" onMouseLeave={this.hoverEnd}>
-      {path}
-      {rowDisplay}
+    return (<div
+    >
+      <nav aria-label="breadcrumb" role="navigation">
+        <ol className="breadcrumb">
+          {path}
+        </ol>
+      </nav>
+      <div
+        onMouseLeave={this.hoverEnd}
+        className = "list-group"
+      >
+
+        {rowDisplay}
+      </div>
     </div>);
   }
 }
