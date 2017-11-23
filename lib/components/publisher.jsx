@@ -8,9 +8,8 @@ import push from 'git-push';
 const remote = require('electron').remote;
 const app = remote.app;
 
-const electronFs = remote.require('fs');
+const fs = remote.require('fs-extra');
 const path = remote.require('path');
-const ncp = remote.require('ncp').ncp;
 
 const stages = {
   DEFAULT: 0,
@@ -19,6 +18,9 @@ const stages = {
   COMPLETE: 3,
 }
 
+const REMOTE_HOST = 'https://github.com/nnennaude/chem_class1.git';
+const JS_BUNDLE = 'folder.web.bundle.js';
+
 class Publisher extends React.Component {
   constructor(props) {
     super(props);
@@ -26,11 +28,13 @@ class Publisher extends React.Component {
     this.state = {
       messages: [],
       stage: stages.DEFAULT,
+      progress: 0,
     };
 
     this.saveFolderMap = this.saveFolderMap.bind(this);
     this.eachMessage = this.eachMessage.bind(this);
     this.outputMessage = this.outputMessage.bind(this);
+    this.goToSite = this.goToSite.bind(this);
   }
 
   eachMessage(m, i){
@@ -45,75 +49,87 @@ class Publisher extends React.Component {
 
   saveFolderMap(e) {
     e.preventDefault();
+    const outputMessage = this.outputMessage;
+    const setState = this.setState;
+    const folderMap = this.props.folderMap;
 
     this.setState({
       stage: stages.PUBLISHING,
       messages: [],
     });
-    const content = JSON.stringify(this.props.folderMap);
-  
+
+    function updateProgress(progress) {
+      this.setState({progress});
+    }
+    updateProgress = updateProgress.bind(this);
+
     const appPath = app.getAppPath();
     const tempPath = app.getPath('temp');
-    console.log(appPath);
-    console.log(tempPath);
   
-    let source = path.resolve(appPath, 'app');
+    const origin = path.resolve(appPath, 'app');
     const tempWebsite = path.resolve(tempPath, 'website');
-  
-    ncp(source, tempWebsite, function (err) {
-      if (err) {
-        return console.error(err);
-      }
-      this.outputMessage(`copied html to '${tempWebsite}'`);
+
+    const bundleOrigin = path.resolve(appPath, `out/${JS_BUNDLE}`);
+    const bundleCopy =  path.resolve(tempWebsite, `js/${JS_BUNDLE}`);
+
+    const folderMapFileName = path.resolve(tempWebsite, 'folderMap2.json');
+
+    fs.copy(origin, tempWebsite)
+    .then(() => {
+      outputMessage(`copied html to '${tempWebsite}'`);
+      updateProgress(25);
+
+      return fs.copy(bundleOrigin, bundleCopy);
+    }).then(() => {
+      outputMessage(`copied ${bundleOrigin} to '${bundleCopy}'`);
+      updateProgress(35);
       
-      source = path.resolve(appPath, 'out/folder.web.bundle.js');
-      const destination = path.resolve(tempWebsite, 'js/folder.web.bundle.js');
-      ncp(source, destination, function (err) {
-        if (err) {
-          return console.error(err);
-        }
-        this.outputMessage(`copied ${source} to '${destination}'`);
       
-        const fileName = path.resolve(tempWebsite, 'folderMap2.json');
-      
-        electronFs.writeFile(fileName, content, 'utf8', function (err) {
-          if (err) {
-            return console.log(err);
-          }
-      
-          this.outputMessage(`The file was saved at '${fileName}'`);
-          push(tempWebsite, 'https://github.com/nnennaude/chem_class1.git', function() {
-            this.outputMessage('pushed to github');
-            this.setState({
-              stage: stages.COMPLETE,
-            });
-          }.bind(this));
-        }.bind(this));
-      }.bind(this));
-     }.bind(this));
-  
+      return fs.writeJson(folderMapFileName, folderMap)
+    }).then(() => {
+      outputMessage(`The file was saved at '${folderMapFileName}'`);
+      updateProgress(65);
+
+      return new Promise((resolve, reject) => {
+        push(tempWebsite, REMOTE_HOST, resolve);
+      });
+    }).then((() => {
+      outputMessage(`published at ${REMOTE_HOST}`);
+      this.setState({
+        stage: stages.COMPLETE,
+        progress: 100,
+      });
+    }).bind(this)).catch(err => console.error(err));
+  }
+
+  goToSite(){
+    remote.shell.openExternal('https://nnennaude.github.io/chem_class1');
   }
   
 
   render() {
     const log = this.state.messages.join("\n");    
     const output = (this.state.stage >= stages.PUBLISHING) && (<pre className="pre-scrollable"><code>{log}</code></pre>);
-    const btn = (this.state.stage == stages.DEFAULT) && (<button
-    className="btn btn-primary btn-lg btn-block"
-    href="#portfolioModal1"
-    data-toggle="modal"
-    onClick={this.saveFolderMap}
-  >
-    Start
-  </button>);
+    const startBtn = (this.state.stage == stages.DEFAULT) && (<button
+      className="btn btn-primary btn-lg btn-block"
+      href="#portfolioModal1"
+      data-toggle="modal"
+      onClick={this.saveFolderMap}
+    >
+      Start
+    </button>);
+    const externalLink = (this.state.stage == stages.COMPLETE) && (<button className="btn btn-success" type="button" onClick={this.goToSite}>
+      <i className="fa fa-times"></i>
+      View Site
+    </button>);
 
-    const progressBar = (this.state.stage == stages.PUBLISHING) && (<div className="progress">
+    const progressBar = (this.state.stage >= stages.PUBLISHING) && (<div className="progress">
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
         role="progressbar"
         aria-valuenow="75"
         aria-valuemin="0" aria-valuemax="100"
-        style={{width: "100%"}}>
+        style={{width: `${this.state.progress}%`}}>
       </div>
     </div>);
 
@@ -132,14 +148,11 @@ class Publisher extends React.Component {
                 <div className="modal-body">
                   <h2>Publish</h2>
                   <hr className="star-primary"/>
-                  {btn}
+                  {startBtn}
                   {progressBar}
                   {output}
                   
-                  <button className="btn btn-success" type="button" data-dismiss="modal">
-                    <i className="fa fa-times"></i>
-                    Close
-                  </button>
+                  {externalLink}
                 </div>
               </div>
             </div>
