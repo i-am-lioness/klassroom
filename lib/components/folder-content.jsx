@@ -11,17 +11,12 @@ class FolderContents extends React.Component {
 
     this.state = {
       path: [],
-      name: '',
       files: [],
       links: [],
       currentFolderId: '',
-
-      hoveredIdx: -1,
     };
 
     this.navigate = this.navigate.bind(this);
-    this.hoverStart = this.hoverStart.bind(this);
-    this.hoverEnd = this.hoverEnd.bind(this);
     this.eachFile = this.eachFile.bind(this);
     this.eachLevel = this.eachLevel.bind(this);
     this.navToFolder = this.navToFolder.bind(this);
@@ -32,7 +27,7 @@ class FolderContents extends React.Component {
     this.currentLine = null;
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.init();
   }
 
@@ -40,14 +35,14 @@ class FolderContents extends React.Component {
     if (!Object.prototype.hasOwnProperty.call(prevProps.folderMap, ROOT_FOLDER)) this.init();
   }
 
-  init(){
+  init() {
     if (Object.prototype.hasOwnProperty.call(this.props.folderMap, ROOT_FOLDER)) {
       this.navToFolder({ id: ROOT_FOLDER, name: 'Resources' }, -1);
-    } 
+    }
   }
 
   navigate(data, e, level) {
-    e && e.preventDefault();
+    e.preventDefault();
     this.navToFolder(data, level);
   }
 
@@ -75,7 +70,6 @@ class FolderContents extends React.Component {
     }
 
     this.setState({
-      hoveredIdx: -1,
       path,
       files,
       links,
@@ -87,15 +81,6 @@ class FolderContents extends React.Component {
     e.preventDefault();
 
     this.props.onAddLink(this.state.currentFolderId);
-  }
-
-
-  hoverStart(idx, e) {
-    this.setState({ hoveredIdx: idx });
-  }
-
-  hoverEnd() {
-    this.setState({ hoveredIdx: -1 });
   }
 
   eachFile(file, idx) {
@@ -113,26 +98,26 @@ class FolderContents extends React.Component {
       contentLink = file.name;
     }
 
-    return (<button
-      type="button" 
-      className="folder-content-item list-group-item list-group-item-action"
-      onClick={(e) => { this.navigate(file, e, -1); }}
-      key={file.id}
-      onMouseEnter={(e) => { this.hoverStart(idx, e); }}
-    >
-      {contentLink}
-    </button>);
+    return (
+      <button
+        type="button"
+        className="folder-content-item list-group-item list-group-item-action"
+        onClick={(e) => { this.navigate(file, e, -1); }}
+        key={file.id}
+      >
+        {contentLink}
+      </button>);
   }
-  
+
   eachLink(link, idx) {
-    return (<a
-      href={link.url}
-      className="folder-content-item list-group-item list-group-item-action list-group-item-info"
-      key={idx}
-      onMouseEnter={(e) => { this.hoverStart(idx, e); }}
-    >
-      {link.name}
-    </a>);
+    return (
+      <a
+        href={link.url}
+        className="folder-content-item list-group-item list-group-item-action list-group-item-info"
+        key={idx}
+      >
+        {link.name}
+      </a>);
   }
 
   eachLevel(file, idx) {
@@ -152,38 +137,42 @@ class FolderContents extends React.Component {
     const linkDisplay = this.state.links.map(this.eachLink);
     const path = this.state.path.map(this.eachLevel);
 
-    const addLinkBtn = this.props.admin && (<button
-      className="btn btn-primary"
-      onClick={this.handleAddLink}
-      href="#portfolioModalB"
-      data-toggle="modal"
+    const addLinkBtn = this.props.admin && (
+      <button
+        className="btn btn-primary"
+        onClick={this.handleAddLink}
+        href="#portfolioModalB"
+        data-toggle="modal"
       >
         Add Link
       </button>);
 
-    return (<div
-    >
-      <nav aria-label="breadcrumb" role="navigation">
-        <ol className="breadcrumb">
-          {path}
-        </ol>
-        {addLinkBtn}
-      </nav>
-      <div
-        onMouseLeave={this.hoverEnd}
-        className = "list-group"
-      >
-
-        {fileDisplay}
-        {linkDisplay}
-      </div>
-    </div>);
+    return (
+      <div>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            {path}
+          </ol>
+          {addLinkBtn}
+        </nav>
+        <div
+          className="list-group"
+        >
+          {fileDisplay}
+          {linkDisplay}
+        </div>
+      </div>);
   }
 }
 
+FolderContents.defaultProps = {
+  admin: false,
+  onAddLink: null,
+};
+
 FolderContents.propTypes = {
-  folderMap: PropTypes.object.isRequired,
-  linkMap: PropTypes.object.isRequired,
+  folderMap: PropTypes.objectOf(PropTypes.array).isRequired,
+  linkMap: PropTypes.objectOf(PropTypes.array).isRequired,
   admin: PropTypes.bool,
   onAddLink: PropTypes.func,
 };
