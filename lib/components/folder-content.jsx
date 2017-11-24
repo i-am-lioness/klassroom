@@ -26,6 +26,7 @@ class FolderContents extends React.Component {
   }
 
   componentDidMount() {
+    this.sessionStart = new Date();
     this.init();
   }
 
@@ -93,10 +94,12 @@ class FolderContents extends React.Component {
   }
 
   eachLink(link, idx) {
+    const isNew = link.timestamp && (link.timestamp > this.sessionStart);
+    const newClass = isNew ? 'list-group-item-info' : 'list-group-item-warning';
     return (
       <a
         href={link.url}
-        className="folder-content-item list-group-item list-group-item-action list-group-item-info"
+        className={`folder-content-item list-group-item list-group-item-action ${newClass}`}
         key={idx}
       >
         {link.name}

@@ -22,6 +22,7 @@ class LinkEditor extends React.Component {
       name: this.linkNameInput.value,
       url: this.linkUrlInput.value,
       type: this.linkTypeSelector.value,
+      timestamp: new Date(),
     });
   }
 
