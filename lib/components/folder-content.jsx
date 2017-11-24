@@ -11,8 +11,6 @@ class FolderContents extends React.Component {
 
     this.state = {
       path: [],
-      files: [],
-      links: [],
       currentFolderId: '',
     };
 
@@ -48,19 +46,6 @@ class FolderContents extends React.Component {
 
   navToFolder(data, level) {
     const folderID = data.id;
-    let files;
-    let links = [];
-
-    if (Object.prototype.hasOwnProperty.call(this.props.folderMap, folderID)) {
-      files = this.props.folderMap[folderID];
-    } else {
-      throw new Error(`Folder '${folderID}' not found.`);
-    }
-
-    if (Object.prototype.hasOwnProperty.call(this.props.linkMap, folderID)) {
-      links = this.props.linkMap[folderID];
-    } // TO DO: linkMap should be loaded
-
 
     let path;
     if (level > -1) {
@@ -71,8 +56,6 @@ class FolderContents extends React.Component {
 
     this.setState({
       path,
-      files,
-      links,
       currentFolderId: folderID,
     });
   }
@@ -133,8 +116,20 @@ class FolderContents extends React.Component {
   }
 
   render() {
-    const fileDisplay = this.state.files.map(this.eachFile);
-    const linkDisplay = this.state.links.map(this.eachLink);
+    let files = [];
+    let links = [];
+    const folderID = this.state.currentFolderId;
+
+    if (Object.prototype.hasOwnProperty.call(this.props.folderMap, folderID)) {
+      files = this.props.folderMap[folderID];
+    }
+
+    if (Object.prototype.hasOwnProperty.call(this.props.linkMap, folderID)) {
+      links = this.props.linkMap[folderID];
+    }
+
+    const fileDisplay = files.map(this.eachFile);
+    const linkDisplay = links.map(this.eachLink);
     const path = this.state.path.map(this.eachLevel);
 
     const addLinkBtn = this.props.admin && (
