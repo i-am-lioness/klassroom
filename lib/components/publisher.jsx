@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import push from 'git-push';
+import { constants } from '../klassroom-util';
 
 const { remote } = require('electron');
 
@@ -23,7 +24,7 @@ const JS_BUNDLE = 'folder.web.bundle.js';
 
 function goToSite(e) {
   e.preventDefault();
-  remote.shell.openExternal('https://nnennaude.github.io/chem_class1');
+  remote.shell.openExternal(constants.REMOTE_URL);
 }
 
 class Publisher extends React.Component {
@@ -63,7 +64,8 @@ class Publisher extends React.Component {
     const bundleOrigin = path.resolve(appPath, `out/${JS_BUNDLE}`);
     const bundleCopy = path.resolve(tempWebsite, `js/${JS_BUNDLE}`);
 
-    const folderMapFileName = path.resolve(tempWebsite, 'folderMap2.json');
+    const folderMapFileName = path.resolve(tempWebsite, constants.FOLDER_MAP_FILE_NAME);
+    const linkMapFileName = path.resolve(tempWebsite, constants.LINK_MAP_FILE_NAME);
 
     fs.copy(origin, tempWebsite)
       .then(() => {
@@ -77,8 +79,14 @@ class Publisher extends React.Component {
 
         return fs.writeJson(folderMapFileName, this.props.folderMap);
       }).then(() => {
-        this.outputMessage(`The file was saved at '${folderMapFileName}'`);
+        this.outputMessage(`The folders tree was saved at '${folderMapFileName}'`);
         this.setState({ progress: 65 });
+
+        return fs.writeJson(linkMapFileName, this.props.linkMap);
+      })
+      .then(() => {
+        this.outputMessage(`The links were saved at '${linkMapFileName}'`);
+        this.setState({ progress: 75 });
 
         return new Promise((resolve, reject) => {
           push(tempWebsite, REMOTE_HOST, resolve);
@@ -162,6 +170,7 @@ class Publisher extends React.Component {
 
 Publisher.propTypes = {
   folderMap: PropTypes.objectOf(PropTypes.array).isRequired,
+  linkMap: PropTypes.objectOf(PropTypes.array).isRequired,
 };
 
 export default Publisher;

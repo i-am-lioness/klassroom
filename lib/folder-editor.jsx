@@ -4,7 +4,7 @@ import update from 'immutability-helper';
 import FolderContent from './components/folder-content';
 import Publisher from './components/publisher';
 import LinkEditor from './components/link-editor';
-import { preLoadFolderContent, loadLinkMap } from './klassroom-util';
+import { preLoadFolderContent } from './klassroom-util';
 
 class FolderEditor extends React.Component {
   constructor(props) {
@@ -21,11 +21,8 @@ class FolderEditor extends React.Component {
   }
 
   componentDidMount() {
-    preLoadFolderContent().then((folderMap) => {
-      this.setState({ folderMap });
-      return loadLinkMap();
-    }).then((linkMap) => {
-      this.setState({ linkMap });
+    preLoadFolderContent().then((data) => {
+      this.setState(data);
     });
   }
 
@@ -54,6 +51,7 @@ class FolderEditor extends React.Component {
 
         <Publisher
           folderMap={this.state.folderMap}
+          linkMap={this.state.linkMap}
         />
         <LinkEditor
           onSubmit={this.addLink}

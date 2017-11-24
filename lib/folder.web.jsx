@@ -4,13 +4,12 @@ import ReactDOM from 'react-dom';
 import FolderContent from './components/folder-content';
 import { preLoadFolderContent } from './klassroom-util';
 
-let folderMap;
 
-preLoadFolderContent().then((fm) => {
-  folderMap = fm;
+preLoadFolderContent().then((maps) => {
   ReactDOM.render(
     <FolderContent
-      folderMap={folderMap}
+      folderMap={maps.folderMap}
+      linkMap={maps.linkMap}
     />,
     document.getElementById('fileDisplay')
   );
