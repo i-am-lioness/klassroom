@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
+import { linkTypes } from '../klassroom-util';
 
 const ROOT_FOLDER = '1jhCLoVcxO0wD7MKZ4jtEtF6qCxixGo5c';
 
@@ -19,7 +20,6 @@ class FolderContents extends React.Component {
     this.eachLevel = this.eachLevel.bind(this);
     this.navToFolder = this.navToFolder.bind(this);
     this.init = this.init.bind(this);
-    this.handleAddLink = this.handleAddLink.bind(this);
     this.eachLink = this.eachLink.bind(this);
 
     this.currentLine = null;
@@ -59,12 +59,7 @@ class FolderContents extends React.Component {
       path,
       currentFolderId: folderID,
     });
-  }
-
-  handleAddLink(e) {
-    e.preventDefault();
-
-    this.props.onAddLink(this.state.currentFolderId);
+    if (this.props.updateCurrentFolder) this.props.updateCurrentFolder(folderID);
   }
 
   eachFile(file, idx) {
@@ -96,21 +91,47 @@ class FolderContents extends React.Component {
   eachLink(link, idx) {
     const isNew = link.timestamp && (link.timestamp > this.sessionStart);
     const newClass = isNew ? 'list-group-item-info' : 'list-group-item-warning';
+
+    const deleteLinkBtn = (
+      <button
+        type="button"
+        className="btn btn-outline-primary btn-sm"
+        onClick={(e) => { e.preventDefault(); this.props.deleteLink(idx); }}
+      >
+        <i className="fa fa-trash-o" aria-hidden="true" />
+      </button>);
+
+    let icon;
+    console.log('link.type', link.type);
+    switch (link.type) {
+      case linkTypes.DOCUMENT:
+        icon = 'file-text-o';
+        break;
+      case linkTypes.VIDEO:
+        icon = 'film';
+        break;
+      case linkTypes.WEBSITE:
+      default:
+        icon = 'link';
+    }
     return (
-      <a
-        href={link.url}
+      <li
         className={`folder-content-item list-group-item list-group-item-action ${newClass}`}
         key={idx}
       >
-        {link.name}
-      </a>);
+        <a href={link.url}>
+          <i className={`fa fa-${icon} fa-fw`} aria-hidden="true" />&nbsp;
+          {link.name}
+        </a>
+        {this.props.admin && deleteLinkBtn}
+      </li>);
   }
 
   eachLevel(file, idx) {
     return (
       <li key={file.id} className="breadcrumb-item">
         <a
-          href="#"
+          href={`#${file.name}`}
           onClick={(e) => { this.navigate(file, e, idx); }}
         >
           {file.name}
@@ -165,14 +186,16 @@ class FolderContents extends React.Component {
 
 FolderContents.defaultProps = {
   admin: false,
-  onAddLink: null,
+  updateCurrentFolder: null,
+  deleteLink: null,
 };
 
 FolderContents.propTypes = {
   folderMap: PropTypes.objectOf(PropTypes.array).isRequired,
   linkMap: PropTypes.objectOf(PropTypes.array).isRequired,
+  deleteLink: PropTypes.func,
   admin: PropTypes.bool,
-  onAddLink: PropTypes.func,
+  updateCurrentFolder: PropTypes.func,
 };
 
 export default FolderContents;

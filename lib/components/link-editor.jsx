@@ -1,13 +1,7 @@
 /* eslint-env browser */
 import React from 'react';
 import PropTypes from 'prop-types';
-
-const linkTypes = {
-  OTHER: 0,
-  WEBSITE: 1,
-  VIDEO: 2,
-  DOCUMENT: 3,
-};
+import { linkTypes } from '../klassroom-util';
 
 class LinkEditor extends React.Component {
   constructor(props) {

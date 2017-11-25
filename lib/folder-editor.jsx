@@ -18,6 +18,7 @@ class FolderEditor extends React.Component {
 
     this.addLink = this.addLink.bind(this);
     this.setCurrentFolder = this.setCurrentFolder.bind(this);
+    this.deleteLink = this.deleteLink.bind(this);
   }
 
   componentDidMount() {
@@ -36,13 +37,20 @@ class FolderEditor extends React.Component {
     this.setState({ linkMap });
   }
 
+  deleteLink(linkIdx) {
+    const folderID = this.state.currentFolder;
+    const linkMap = update(this.state.linkMap, { [folderID]: { $splice: [[linkIdx, 1]] } });
+    this.setState({ linkMap });
+  }
+
   render() {
     return (
       <div>
         <FolderContent
           folderMap={this.state.folderMap}
           linkMap={this.state.linkMap}
-          onAddLink={this.setCurrentFolder}
+          updateCurrentFolder={this.setCurrentFolder}
+          deleteLink={this.deleteLink}
           admin
         />
         <a className="btn btn-primary btn-lg btn-block" href="#portfolioModalA" data-toggle="modal">
