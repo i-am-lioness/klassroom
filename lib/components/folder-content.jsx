@@ -47,9 +47,9 @@ function iconByType(listing) {
 
 function compareByTypeThenName(a, b) {
   if ((a.mimeType === mimeTypes.FOLDER) && (b.mimeType !== mimeTypes.FOLDER)) {
-    return 1;
-  } else if ((a.mimeType !== mimeTypes.FOLDER) && (b.mimeType === mimeTypes.FOLDER)) {
     return -1;
+  } else if ((a.mimeType !== mimeTypes.FOLDER) && (b.mimeType === mimeTypes.FOLDER)) {
+    return 1;
   }
   return (a.name > b.name);
 }
@@ -121,21 +121,24 @@ class FolderContents extends React.Component {
         {file.name}
       </a>);
 
-    // console.log('file.mimeType', file.mimeType);
     if (file.mimeType === mimeTypes.FOLDER) {
-      contentLink = <strong>{file.name}</strong>;
+      contentLink = (
+        <a
+          href={`#${file.name}`}
+          onClick={(e) => { this.navigate(file, e, -1); }}
+        >
+          <strong>{file.name}</strong>
+        </a>);
     }
 
     return (
-      <button
-        type="button"
+      <li
         className="folder-content-item list-group-item list-group-item-action"
-        onClick={(e) => { this.navigate(file, e, -1); }}
         key={file.id}
       >
         {iconByType(file)}
         {contentLink}
-      </button>);
+      </li>);
   }
 
   eachLink(link, idx) {
