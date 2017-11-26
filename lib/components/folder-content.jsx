@@ -36,6 +36,9 @@ function iconByType(listing) {
       case linkTypes.VIDEO:
         icon = 'film';
         break;
+      case linkTypes.YOUTUBE_VIDEO:
+        icon = 'youtube-play';
+        break;
       case linkTypes.WEBSITE:
       default:
         icon = 'link';

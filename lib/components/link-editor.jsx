@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { linkTypes } from '../klassroom-util';
+import { getYTdata } from '../youtube';
 
 class LinkEditor extends React.Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class LinkEditor extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.clearValues = this.clearValues.bind(this);
+    this.searchYoutube = this.searchYoutube.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,6 +45,15 @@ class LinkEditor extends React.Component {
     this.clearValues();
   }
 
+  searchYoutube(e) {
+    getYTdata(e.target.value).then((res) => {
+      const data = res.snippet;
+      const { title } = data;
+      this.linkNameInput.value = title;
+      this.linkTypeSelector.value = linkTypes.YOUTUBE_VIDEO;
+    });
+  }
+
   render() {
     const linkTypeOptions = Object.getOwnPropertyNames(linkTypes).map((t) => {
       const val = linkTypes[t];
@@ -54,6 +65,17 @@ class LinkEditor extends React.Component {
     const form = (
       <form onSubmit={this.handleSubmit}>
         <div className="form-group">
+          <label htmlFor="exampleFormControlInput1">URL</label>
+          <input
+            id="exampleFormControlInput1"
+            type="text"
+            className="form-control"
+            placeholder="ex: http://youtube.com/"
+            onChange={this.searchYoutube}
+            ref={(input) => { this.linkUrlInput = input; }}
+          />
+        </div>
+        <div className="form-group">
           <label htmlFor="exampleFormControlInput1">Name of Link</label>
           <input
             id="exampleFormControlInput1"
@@ -61,16 +83,6 @@ class LinkEditor extends React.Component {
             className="form-control"
             placeholder="ex: Bohr's Model"
             ref={(input) => { this.linkNameInput = input; }}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="exampleFormControlInput1">URL</label>
-          <input
-            id="exampleFormControlInput1"
-            type="text"
-            className="form-control"
-            placeholder="ex: http://youtube.com/"
-            ref={(input) => { this.linkUrlInput = input; }}
           />
         </div>
         <div className="form-group">
