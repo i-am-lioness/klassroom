@@ -6,15 +6,24 @@ import { linkTypes } from '../klassroom-util';
 
 const ROOT_FOLDER = '1jhCLoVcxO0wD7MKZ4jtEtF6qCxixGo5c';
 
+const mimeTypes = {
+  FOLDER: 'application/vnd.google-apps.folder',
+  POWERPOINT: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  PDF: 'application/pdf',
+};
+
 function iconByType(listing) {
   let icon;
   if (Object.prototype.hasOwnProperty.call(listing, 'mimeType')) {
     switch (listing.mimeType) {
-      case 'application/vnd.google-apps.folder':
+      case mimeTypes.FOLDER:
         icon = 'folder';
         break;
-      case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+      case mimeTypes.POWERPOINT:
         icon = 'file-powerpoint-o';
+        break;
+      case mimeTypes.PDF:
+        icon = 'file-pdf-o';
         break;
       default:
         icon = 'file';
@@ -34,6 +43,15 @@ function iconByType(listing) {
   }
 
   return (<span><i className={`fa fa-${icon} fa-fw`} aria-hidden="true" /> &nbsp;</span>);
+}
+
+function compareByTypeThenName(a, b) {
+  if ((a.mimeType === mimeTypes.FOLDER) && (b.mimeType !== mimeTypes.FOLDER)) {
+    return 1;
+  } else if ((a.mimeType !== mimeTypes.FOLDER) && (b.mimeType === mimeTypes.FOLDER)) {
+    return -1;
+  }
+  return (a.name > b.name);
 }
 
 class FolderContents extends React.Component {
@@ -104,7 +122,7 @@ class FolderContents extends React.Component {
       </a>);
 
     // console.log('file.mimeType', file.mimeType);
-    if (file.mimeType === 'application/vnd.google-apps.folder') {
+    if (file.mimeType === mimeTypes.FOLDER) {
       contentLink = <strong>{file.name}</strong>;
     }
 
@@ -175,7 +193,8 @@ class FolderContents extends React.Component {
     const folderID = this.state.currentFolderId;
 
     if (Object.prototype.hasOwnProperty.call(this.props.folderMap, folderID)) {
-      files = this.props.folderMap[folderID];
+      // files = this.props.folderMap[folderID];
+      files = [].concat(this.props.folderMap[folderID]).sort(compareByTypeThenName);
     }
 
     if (Object.prototype.hasOwnProperty.call(this.props.linkMap, folderID)) {
