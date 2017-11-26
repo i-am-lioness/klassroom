@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
+import Player from './player';
 import { linkTypes } from '../klassroom-util';
 
 const ROOT_FOLDER = '1jhCLoVcxO0wD7MKZ4jtEtF6qCxixGo5c';
@@ -64,6 +65,7 @@ class FolderContents extends React.Component {
     this.state = {
       path: [],
       currentFolderId: '',
+      currentVideo: { name: null, videoID: null },
     };
 
     this.navigate = this.navigate.bind(this);
@@ -72,6 +74,7 @@ class FolderContents extends React.Component {
     this.navToFolder = this.navToFolder.bind(this);
     this.init = this.init.bind(this);
     this.eachLink = this.eachLink.bind(this);
+    this.playVideo = this.playVideo.bind(this);
 
     this.currentLine = null;
   }
@@ -111,6 +114,10 @@ class FolderContents extends React.Component {
       currentFolderId: folderID,
     });
     if (this.props.updateCurrentFolder) this.props.updateCurrentFolder(folderID);
+  }
+
+  playVideo(currentVideo) {
+    this.setState({ currentVideo });
   }
 
   eachFile(file, idx) {
@@ -168,15 +175,35 @@ class FolderContents extends React.Component {
         </button>
       </span>);
 
+    let anchor;
+    if ((+link.type) === linkTypes.YOUTUBE_VIDEO) {
+      anchor = (
+        <a
+          href="#"
+          data-toggle="modal"
+          data-target="#portfolioModalC"
+          onClick={(e) => { this.playVideo(link); }}
+        >
+          {link.name}
+        </a>);
+    } else {
+      anchor = (
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link.name}
+        </a>);
+    }
+
     return (
       <li
         className={`folder-content-item list-group-item list-group-item-action ${newClass}`}
         key={idx}
       >
-        <a href={link.url}>
-          {iconByType(link)}
-          {link.name}
-        </a>
+        {iconByType(link)}
+        {anchor}
         {this.props.admin && editLinkBtns}
       </li>);
   }
@@ -235,6 +262,7 @@ class FolderContents extends React.Component {
           {fileDisplay}
           {linkDisplay}
         </div>
+        <Player videoData={this.state.currentVideo} />
       </div>);
   }
 }

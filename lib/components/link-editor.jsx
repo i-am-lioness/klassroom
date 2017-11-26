@@ -36,6 +36,9 @@ class LinkEditor extends React.Component {
       type: this.linkTypeSelector.value,
       timestamp: new Date(),
     };
+    if ((+linkData.type) === linkTypes.YOUTUBE_VIDEO) {
+      linkData.videoID = this.videoID;
+    }
 
     if (this.props.linkToModify) {
       this.props.onSave(linkData);
@@ -48,6 +51,7 @@ class LinkEditor extends React.Component {
   searchYoutube(e) {
     getYTdata(e.target.value).then((res) => {
       const data = res.snippet;
+      this.videoID = res.id;
       const { title } = data;
       this.linkNameInput.value = title;
       this.linkTypeSelector.value = linkTypes.YOUTUBE_VIDEO;
