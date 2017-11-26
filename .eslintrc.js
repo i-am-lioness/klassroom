@@ -19,6 +19,7 @@ module.exports = {
         "no-param-reassign": [2, { "props": false }],
         "no-unused-expressions": 1,
         "react/sort-comp": 0, */
+        "no-restricted-globals": [0, "isNaN"],
         "no-else-return": 0,
         "jsx-a11y/label-has-for": [ 2, {
             "components": [ "Label" ],

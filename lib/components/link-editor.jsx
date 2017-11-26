@@ -8,16 +8,39 @@ class LinkEditor extends React.Component {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.clearValues = this.clearValues.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.linkToModify) && (this.props.linkToModify === null)) {
+      this.linkNameInput.value = nextProps.linkToModify.name;
+      this.linkUrlInput.value = nextProps.linkToModify.url;
+      this.linkTypeSelector.value = +(nextProps.linkToModify.type);
+    }
+  }
+
+  clearValues() {
+    this.linkNameInput.value = '';
+    this.linkUrlInput.value = '';
+    this.linkTypeSelector.value = null;
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    this.props.onSubmit({
+
+    const linkData = {
       name: this.linkNameInput.value,
       url: this.linkUrlInput.value,
       type: this.linkTypeSelector.value,
       timestamp: new Date(),
-    });
+    };
+
+    if (this.props.linkToModify) {
+      this.props.onSave(linkData);
+    } else {
+      this.props.onAdd(linkData);
+    }
+    this.clearValues();
   }
 
   render() {
@@ -25,6 +48,8 @@ class LinkEditor extends React.Component {
       const val = linkTypes[t];
       return (<option key={val} value={val}>{t}</option>);
     });
+
+    const buttonText = this.props.linkToModify ? 'Save' : 'Add';
 
     const form = (
       <form onSubmit={this.handleSubmit}>
@@ -58,8 +83,10 @@ class LinkEditor extends React.Component {
           </select>
         </div>
         <div className="modal-footer">
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" className="btn btn-primary">
+            {buttonText}
+          </button>
+          <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </div>
       </form>
     );
@@ -95,8 +122,21 @@ class LinkEditor extends React.Component {
   }
 }
 
+LinkEditor.defaultProps = {
+  linkToModify: null,
+};
+
 LinkEditor.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  linkToModify: PropTypes.shape({
+    name: PropTypes.string,
+    url: PropTypes.string,
+    type: (props, propName) => {
+      const prop = props[propName];
+      return (isNaN(prop));
+    },
+  }),
 };
 
 export default LinkEditor;

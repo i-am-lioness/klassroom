@@ -14,11 +14,15 @@ class FolderEditor extends React.Component {
       folderMap: {},
       linkMap: {},
       currentFolder: '',
+      editIndex: -1,
+      linkToModify: null,
     };
 
     this.addLink = this.addLink.bind(this);
     this.setCurrentFolder = this.setCurrentFolder.bind(this);
     this.deleteLink = this.deleteLink.bind(this);
+    this.editLink = this.editLink.bind(this);
+    this.saveLink = this.saveLink.bind(this);
   }
 
   componentDidMount() {
@@ -31,10 +35,21 @@ class FolderEditor extends React.Component {
     this.setState({ currentFolder });
   }
 
+  editLink(linkToModify, editIndex) {
+    this.setState({ editIndex, linkToModify });
+  }
+
   addLink(linkData) {
     const folderID = this.state.currentFolder;
     const linkMap = update(this.state.linkMap, { [folderID]: { $push: [linkData] } });
     this.setState({ linkMap });
+  }
+
+  saveLink(linkData) {
+    const folderID = this.state.currentFolder;
+    const linkIdx = this.state.editIndex;
+    const linkMap = update(this.state.linkMap, { [folderID]: { [linkIdx]: { $set: linkData } } });
+    this.setState({ linkMap, editIndex: -1, linkToModify: null });
   }
 
   deleteLink(linkIdx) {
@@ -51,6 +66,7 @@ class FolderEditor extends React.Component {
           linkMap={this.state.linkMap}
           updateCurrentFolder={this.setCurrentFolder}
           deleteLink={this.deleteLink}
+          editLink={this.editLink}
           admin
         />
         <a className="btn btn-primary btn-lg btn-block" href="#portfolioModalA" data-toggle="modal">
@@ -62,7 +78,9 @@ class FolderEditor extends React.Component {
           linkMap={this.state.linkMap}
         />
         <LinkEditor
-          onSubmit={this.addLink}
+          onAdd={this.addLink}
+          onSave={this.saveLink}
+          linkToModify={this.state.linkToModify}
         />
       </div>);
   }

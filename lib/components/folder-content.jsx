@@ -92,14 +92,25 @@ class FolderContents extends React.Component {
     const isNew = link.timestamp && (link.timestamp > this.sessionStart);
     const newClass = isNew ? 'list-group-item-info' : 'list-group-item-warning';
 
-    const deleteLinkBtn = (
-      <button
-        type="button"
-        className="btn btn-outline-primary btn-sm"
-        onClick={(e) => { e.preventDefault(); this.props.deleteLink(idx); }}
-      >
-        <i className="fa fa-trash-o" aria-hidden="true" />
-      </button>);
+    const editLinkBtns = (
+      <span>
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm"
+          onClick={(e) => { e.preventDefault(); this.props.deleteLink(idx); }}
+        >
+          <i className="fa fa-trash-o" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          href="#portfolioModalB"
+          data-toggle="modal"
+          className="btn btn-outline-primary btn-sm"
+          onClick={(e) => { e.preventDefault(); this.props.editLink(link, idx); }}
+        >
+          <i className="fa fa-pencil" aria-hidden="true" />
+        </button>
+      </span>);
 
     let icon;
     console.log('link.type', link.type);
@@ -123,7 +134,7 @@ class FolderContents extends React.Component {
           <i className={`fa fa-${icon} fa-fw`} aria-hidden="true" />&nbsp;
           {link.name}
         </a>
-        {this.props.admin && deleteLinkBtn}
+        {this.props.admin && editLinkBtns}
       </li>);
   }
 
@@ -188,12 +199,14 @@ FolderContents.defaultProps = {
   admin: false,
   updateCurrentFolder: null,
   deleteLink: null,
+  editLink: null,
 };
 
 FolderContents.propTypes = {
   folderMap: PropTypes.objectOf(PropTypes.array).isRequired,
   linkMap: PropTypes.objectOf(PropTypes.array).isRequired,
   deleteLink: PropTypes.func,
+  editLink: PropTypes.func,
   admin: PropTypes.bool,
   updateCurrentFolder: PropTypes.func,
 };
