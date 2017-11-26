@@ -6,6 +6,36 @@ import { linkTypes } from '../klassroom-util';
 
 const ROOT_FOLDER = '1jhCLoVcxO0wD7MKZ4jtEtF6qCxixGo5c';
 
+function iconByType(listing) {
+  let icon;
+  if (Object.prototype.hasOwnProperty.call(listing, 'mimeType')) {
+    switch (listing.mimeType) {
+      case 'application/vnd.google-apps.folder':
+        icon = 'folder';
+        break;
+      case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+        icon = 'file-powerpoint-o';
+        break;
+      default:
+        icon = 'file';
+    }
+  } else {
+    switch (+listing.type) {
+      case linkTypes.DOCUMENT:
+        icon = 'file-text-o';
+        break;
+      case linkTypes.VIDEO:
+        icon = 'film';
+        break;
+      case linkTypes.WEBSITE:
+      default:
+        icon = 'link';
+    }
+  }
+
+  return (<span><i className={`fa fa-${icon} fa-fw`} aria-hidden="true" /> &nbsp;</span>);
+}
+
 class FolderContents extends React.Component {
   constructor(props) {
     super(props);
@@ -73,8 +103,9 @@ class FolderContents extends React.Component {
         {file.name}
       </a>);
 
+    // console.log('file.mimeType', file.mimeType);
     if (file.mimeType === 'application/vnd.google-apps.folder') {
-      contentLink = file.name;
+      contentLink = <strong>{file.name}</strong>;
     }
 
     return (
@@ -84,6 +115,7 @@ class FolderContents extends React.Component {
         onClick={(e) => { this.navigate(file, e, -1); }}
         key={file.id}
       >
+        {iconByType(file)}
         {contentLink}
       </button>);
   }
@@ -112,26 +144,13 @@ class FolderContents extends React.Component {
         </button>
       </span>);
 
-    let icon;
-    console.log('link.type', link.type);
-    switch (link.type) {
-      case linkTypes.DOCUMENT:
-        icon = 'file-text-o';
-        break;
-      case linkTypes.VIDEO:
-        icon = 'film';
-        break;
-      case linkTypes.WEBSITE:
-      default:
-        icon = 'link';
-    }
     return (
       <li
         className={`folder-content-item list-group-item list-group-item-action ${newClass}`}
         key={idx}
       >
         <a href={link.url}>
-          <i className={`fa fa-${icon} fa-fw`} aria-hidden="true" />&nbsp;
+          {iconByType(link)}
           {link.name}
         </a>
         {this.props.admin && editLinkBtns}
