@@ -2,6 +2,7 @@
 /* global ADMIN */
 import React from 'react';
 import update from 'immutability-helper';
+import { CSSTransitionGroup } from 'react-transition-group';
 import FolderContent from './components/folder-content';
 import Publisher from './components/publisher';
 import LinkEditor from './components/link-editor';
@@ -60,11 +61,14 @@ class FolderEditor extends React.Component {
   }
 
   render() {
-    let display = <p className="text-center"><i className="fa fa-spinner fa-pulse fa-3x fa-fw fa-5x" /></p>;
+    let display = (
+      <p key="spinner" className="text-center">
+        <i className="fa fa-spinner fa-pulse fa-3x fa-fw fa-5x" />
+      </p>);
 
     if (this.state.folderMap) {
       display = (
-        <span>
+        <span key="main">
           <FolderContent
             currentFolder={this.state.currentFolder}
             folderMap={this.state.folderMap}
@@ -98,7 +102,15 @@ class FolderEditor extends React.Component {
 
     return (
       <div>
-        {display}
+        <CSSTransitionGroup
+          transitionName="example"
+          transitionAppear
+          transitionAppearTimeout={500}
+          transitionEnterTimeout={500}
+          transitionLeaveTimeout={300}
+        >
+          {display}
+        </CSSTransitionGroup>
       </div>);
   }
 }

@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
+import { CSSTransitionGroup } from 'react-transition-group';
 import Player from './player';
 import { linkTypes } from '../klassroom-util';
 
@@ -62,7 +63,7 @@ function smoothScroll(hash) {
   const target = window.$(hash);
   if (target.length) {
     window.$('html, body').animate({
-      scrollTop: (target.offset().top - 48)
+      scrollTop: (target.offset().top - 48),
     }, 1000, 'easeInOutExpo');
   }
 }
@@ -124,7 +125,7 @@ class FolderContents extends React.Component {
     if (file.mimeType === mimeTypes.FOLDER) {
       contentLink = (
         <a
-          href="#resources"
+          href="#x"
           onClick={(e) => { this.navigate(file, e, -1); }}
         >
           <strong>{file.name}</strong>
@@ -250,9 +251,15 @@ class FolderContents extends React.Component {
         <div
           className="list-group"
         >
-          {fileDisplay}
-          {linkDisplay}
-          {addLinkBtn}
+          <CSSTransitionGroup
+            transitionName="example"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}
+          >
+            {fileDisplay}
+            {linkDisplay}
+            {addLinkBtn}
+          </CSSTransitionGroup>
         </div>
         <Player videoData={this.state.currentVideo} />
       </div>);
