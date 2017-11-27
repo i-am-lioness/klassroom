@@ -42,7 +42,6 @@ class Publisher extends React.Component {
   }
 
   outputMessage(msg) {
-    console.log(msg);
     const messages = update(this.state.messages, { $push: [msg] });
     this.setState({ messages });
   }
@@ -98,8 +97,8 @@ class Publisher extends React.Component {
           stage: stages.COMPLETE,
           progress: 100,
         });
-      })
-      .catch(err => console.error(err));
+      });
+    // .catch(err => console.error(err));
   }
 
   render() {

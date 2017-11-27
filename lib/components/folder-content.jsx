@@ -30,7 +30,7 @@ function iconByType(listing) {
         icon = 'file';
     }
   } else {
-    switch (+listing.type) {
+    switch (listing.type) {
       case linkTypes.DOCUMENT:
         icon = 'file-text-o';
         break;
@@ -65,7 +65,6 @@ class FolderContents extends React.Component {
     this.state = {
       path: [],
       currentFolderId: '',
-      currentVideo: { name: null, videoID: null },
     };
 
     this.navigate = this.navigate.bind(this);
@@ -176,10 +175,10 @@ class FolderContents extends React.Component {
       </span>);
 
     let anchor;
-    if ((+link.type) === linkTypes.YOUTUBE_VIDEO) {
+    if (link.type === linkTypes.YOUTUBE_VIDEO) {
       anchor = (
         <a
-          href="#"
+          href="#portfolioModalC"
           data-toggle="modal"
           data-target="#portfolioModalC"
           onClick={(e) => { this.playVideo(link); }}

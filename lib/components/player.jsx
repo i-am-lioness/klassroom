@@ -7,8 +7,6 @@ class Player extends React.Component {
     super(props);
 
     this.state = {
-      messages: [],
-      progress: 0,
     };
   }
 
@@ -53,7 +51,7 @@ class Player extends React.Component {
 }
 
 Player.defaultProps = {
-  videoData: { name: null, videoID: null },
+  videoData: { name: '', videoID: '' },
 };
 
 Player.propTypes = {

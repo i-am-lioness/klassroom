@@ -17,7 +17,7 @@ class LinkEditor extends React.Component {
     if ((nextProps.linkToModify) && (this.props.linkToModify === null)) {
       this.linkNameInput.value = nextProps.linkToModify.name;
       this.linkUrlInput.value = nextProps.linkToModify.url;
-      this.linkTypeSelector.value = +(nextProps.linkToModify.type);
+      this.linkTypeSelector.value = nextProps.linkToModify.type;
     }
   }
 
@@ -33,10 +33,10 @@ class LinkEditor extends React.Component {
     const linkData = {
       name: this.linkNameInput.value,
       url: this.linkUrlInput.value,
-      type: this.linkTypeSelector.value,
+      type: +this.linkTypeSelector.value,
       timestamp: new Date(),
     };
-    if ((+linkData.type) === linkTypes.YOUTUBE_VIDEO) {
+    if (linkData.type === linkTypes.YOUTUBE_VIDEO) {
       linkData.videoID = this.videoID;
     }
 
@@ -55,7 +55,7 @@ class LinkEditor extends React.Component {
       const { title } = data;
       this.linkNameInput.value = title;
       this.linkTypeSelector.value = linkTypes.YOUTUBE_VIDEO;
-    });
+    }).catch(() => {});
   }
 
   render() {
