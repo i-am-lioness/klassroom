@@ -1,16 +1,26 @@
 /* eslint-env browser */
+/* global ADMIN */
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import push from 'git-push';
 import { constants } from '../klassroom-util';
 
-const { remote } = require('electron');
+const electron = require('electron');
 
-const { app } = remote;
+let fs;
+let path;
+let push;
+let shell;
+let app;
 
-const fs = remote.require('fs-extra');
-const path = remote.require('path');
+if (ADMIN) {
+  const { remote } = electron;
+  fs = remote.require('fs-extra');
+  path = remote.require('path');
+  push = remote.require('git-push');
+  shell = remote.shell;
+  app = remote.app;
+}
 
 const stages = {
   DEFAULT: 0,
@@ -24,7 +34,7 @@ const JS_BUNDLE = 'folder.web.bundle.js';
 
 function goToSite(e) {
   e.preventDefault();
-  remote.shell.openExternal(constants.REMOTE_URL);
+  shell.openExternal(constants.REMOTE_URL);
 }
 
 class Publisher extends React.Component {

@@ -8,7 +8,7 @@ module.exports = env => (
   {
     context: DEV,
     entry: {
-      folder: './folder.web.jsx',
+      folder: './folder.jsx',
     },
     resolve: {
       extensions: ['.js', '.jsx'],
@@ -18,15 +18,27 @@ module.exports = env => (
       path: OUTPUT,
     },
     module: {
-      loaders: [{
-        include: [DEV],
-        loader: 'babel-loader',
-      }],
+      rules: [
+        {
+          test: path.resolve(__dirname, '../node_modules/electron/index.js'),
+          use: 'null-loader',
+        },
+        {
+          test: /\.jsx$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+          },
+        }
+      ],
     },
     plugins: [
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
+      }),
+      new webpack.DefinePlugin({
+        ADMIN: false,
       })
     ],
   }

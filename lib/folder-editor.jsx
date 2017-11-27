@@ -1,4 +1,5 @@
 /* eslint-env browser */
+/* global ADMIN */
 import React from 'react';
 import update from 'immutability-helper';
 import FolderContent from './components/folder-content';
@@ -67,21 +68,28 @@ class FolderEditor extends React.Component {
           updateCurrentFolder={this.setCurrentFolder}
           deleteLink={this.deleteLink}
           editLink={this.editLink}
-          admin
+          admin={ADMIN}
         />
-        <a className="btn btn-primary btn-lg btn-block" href="#portfolioModalA" data-toggle="modal">
-          Publish
-        </a>
+        {ADMIN && (
+        <span>
+          <a
+            className="btn btn-primary btn-lg btn-block"
+            href="#portfolioModalA"
+            data-toggle="modal"
+          >
+            Publish
+          </a>
 
-        <Publisher
-          folderMap={this.state.folderMap}
-          linkMap={this.state.linkMap}
-        />
-        <LinkEditor
-          onAdd={this.addLink}
-          onSave={this.saveLink}
-          linkToModify={this.state.linkToModify}
-        />
+          <Publisher
+            folderMap={this.state.folderMap}
+            linkMap={this.state.linkMap}
+          />
+          <LinkEditor
+            onAdd={this.addLink}
+            onSave={this.saveLink}
+            linkToModify={this.state.linkToModify}
+          />
+        </span>)}
       </div>);
   }
 }

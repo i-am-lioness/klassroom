@@ -28,6 +28,7 @@
     "git-push": "^0.1.1",
     "immutability-helper": "^2.5.0",
     "jquery": "^3.2.1",
+    "null-loader": "^0.1.1",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "shell": "^0.3.2"
