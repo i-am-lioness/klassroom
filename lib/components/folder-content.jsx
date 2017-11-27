@@ -63,15 +63,12 @@ class FolderContents extends React.Component {
     super(props);
 
     this.state = {
-      path: [],
-      currentFolderId: '',
+      path: [{ id: ROOT_FOLDER, name: 'Resources' }],
     };
 
     this.navigate = this.navigate.bind(this);
     this.eachFile = this.eachFile.bind(this);
     this.eachLevel = this.eachLevel.bind(this);
-    this.navToFolder = this.navToFolder.bind(this);
-    this.init = this.init.bind(this);
     this.eachLink = this.eachLink.bind(this);
     this.playVideo = this.playVideo.bind(this);
 
@@ -80,25 +77,10 @@ class FolderContents extends React.Component {
 
   componentDidMount() {
     this.sessionStart = new Date();
-    this.init();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!Object.prototype.hasOwnProperty.call(prevProps.folderMap, ROOT_FOLDER)) this.init();
-  }
-
-  init() {
-    if (Object.prototype.hasOwnProperty.call(this.props.folderMap, ROOT_FOLDER)) {
-      this.navToFolder({ id: ROOT_FOLDER, name: 'Resources' }, -1);
-    }
   }
 
   navigate(data, e, level) {
     e.preventDefault();
-    this.navToFolder(data, level);
-  }
-
-  navToFolder(data, level) {
     const folderID = data.id;
 
     let path;
@@ -110,9 +92,8 @@ class FolderContents extends React.Component {
 
     this.setState({
       path,
-      currentFolderId: folderID,
     });
-    if (this.props.updateCurrentFolder) this.props.updateCurrentFolder(folderID);
+    this.props.navigateTo(folderID);
   }
 
   playVideo(currentVideo) {
@@ -222,14 +203,14 @@ class FolderContents extends React.Component {
   render() {
     let files = [];
     let links = [];
-    const folderID = this.state.currentFolderId;
+    const folderID = this.props.currentFolder || ROOT_FOLDER;
 
-    if (Object.prototype.hasOwnProperty.call(this.props.folderMap, folderID)) {
-      // files = this.props.folderMap[folderID];
+    if (this.props.folderMap &&
+      Object.prototype.hasOwnProperty.call(this.props.folderMap, folderID)) {
       files = [].concat(this.props.folderMap[folderID]).sort(compareByTypeThenName);
     }
 
-    if (Object.prototype.hasOwnProperty.call(this.props.linkMap, folderID)) {
+    if (this.props.linkMap && Object.prototype.hasOwnProperty.call(this.props.linkMap, folderID)) {
       links = this.props.linkMap[folderID];
     }
 
@@ -267,19 +248,22 @@ class FolderContents extends React.Component {
 }
 
 FolderContents.defaultProps = {
+  folderMap: {},
+  linkMap: {},
+  currentFolder: ROOT_FOLDER,
   admin: false,
-  updateCurrentFolder: null,
   deleteLink: null,
   editLink: null,
 };
 
 FolderContents.propTypes = {
-  folderMap: PropTypes.objectOf(PropTypes.array).isRequired,
-  linkMap: PropTypes.objectOf(PropTypes.array).isRequired,
+  folderMap: PropTypes.objectOf(PropTypes.array),
+  linkMap: PropTypes.objectOf(PropTypes.array),
+  currentFolder: PropTypes.string,
   deleteLink: PropTypes.func,
   editLink: PropTypes.func,
   admin: PropTypes.bool,
-  updateCurrentFolder: PropTypes.func,
+  navigateTo: PropTypes.func.isRequired,
 };
 
 export default FolderContents;

@@ -18,8 +18,7 @@ if (ADMIN) {
   fs = remote.require('fs-extra');
   path = remote.require('path');
   push = remote.require('git-push');
-  shell = remote.shell;
-  app = remote.app;
+  ({ shell, app } = remote);
 }
 
 const stages = {
@@ -176,10 +175,14 @@ class Publisher extends React.Component {
       </div>);
   }
 }
+Publisher.defaultProps = {
+  folderMap: {},
+  linkMap: {},
+};
 
 Publisher.propTypes = {
-  folderMap: PropTypes.objectOf(PropTypes.array).isRequired,
-  linkMap: PropTypes.objectOf(PropTypes.array).isRequired,
+  folderMap: PropTypes.objectOf(PropTypes.array),
+  linkMap: PropTypes.objectOf(PropTypes.array),
 };
 
 export default Publisher;

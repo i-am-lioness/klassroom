@@ -12,9 +12,9 @@ class FolderEditor extends React.Component {
     super(props);
 
     this.state = {
-      folderMap: {},
-      linkMap: {},
-      currentFolder: '',
+      folderMap: null,
+      linkMap: null,
+      currentFolder: null,
       editIndex: -1,
       linkToModify: null,
     };
@@ -60,16 +60,23 @@ class FolderEditor extends React.Component {
   }
 
   render() {
+    let display = <i className="fa fa-spinner fa-pulse fa-3x fa-fw fa-5x" />;
+
+    if (this.state.folderMap) {
+      display = (<FolderContent
+        currentFolder={this.state.currentFolder}
+        folderMap={this.state.folderMap}
+        linkMap={this.state.linkMap}
+        navigateTo={this.setCurrentFolder}
+        deleteLink={this.deleteLink}
+        editLink={this.editLink}
+        admin={ADMIN}
+      />);
+    }
+
     return (
       <div>
-        <FolderContent
-          folderMap={this.state.folderMap}
-          linkMap={this.state.linkMap}
-          updateCurrentFolder={this.setCurrentFolder}
-          deleteLink={this.deleteLink}
-          editLink={this.editLink}
-          admin={ADMIN}
-        />
+        {display}
         {ADMIN && (
         <span>
           <a
