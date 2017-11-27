@@ -60,43 +60,45 @@ class FolderEditor extends React.Component {
   }
 
   render() {
-    let display = <i className="fa fa-spinner fa-pulse fa-3x fa-fw fa-5x" />;
+    let display = <p className="text-center"><i className="fa fa-spinner fa-pulse fa-3x fa-fw fa-5x" /></p>;
 
     if (this.state.folderMap) {
-      display = (<FolderContent
-        currentFolder={this.state.currentFolder}
-        folderMap={this.state.folderMap}
-        linkMap={this.state.linkMap}
-        navigateTo={this.setCurrentFolder}
-        deleteLink={this.deleteLink}
-        editLink={this.editLink}
-        admin={ADMIN}
-      />);
+      display = (
+        <span>
+          <FolderContent
+            currentFolder={this.state.currentFolder}
+            folderMap={this.state.folderMap}
+            linkMap={this.state.linkMap}
+            navigateTo={this.setCurrentFolder}
+            deleteLink={this.deleteLink}
+            editLink={this.editLink}
+            admin={ADMIN}
+          />
+          {ADMIN && (
+          <span>
+            <a
+              className="btn btn-primary btn-lg btn-block"
+              href="#portfolioModalA"
+              data-toggle="modal"
+            >
+              Publish
+            </a>
+            <Publisher
+              folderMap={this.state.folderMap}
+              linkMap={this.state.linkMap}
+            />
+            <LinkEditor
+              onAdd={this.addLink}
+              onSave={this.saveLink}
+              linkToModify={this.state.linkToModify}
+            />
+          </span>)}
+        </span>);
     }
 
     return (
       <div>
         {display}
-        {ADMIN && (
-        <span>
-          <a
-            className="btn btn-primary btn-lg btn-block"
-            href="#portfolioModalA"
-            data-toggle="modal"
-          >
-            Publish
-          </a>
-
-          <Publisher
-            folderMap={this.state.folderMap}
-            linkMap={this.state.linkMap}
-          />
-          <LinkEditor
-            onAdd={this.addLink}
-            onSave={this.saveLink}
-            linkToModify={this.state.linkToModify}
-          />
-        </span>)}
       </div>);
   }
 }

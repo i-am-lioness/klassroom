@@ -220,11 +220,13 @@ class FolderContents extends React.Component {
 
     const addLinkBtn = this.props.admin && (
       <button
-        className="btn btn-primary"
+        type="button"
+        className="list-group-item list-group-item-action list-group-item-light"
         onClick={this.handleAddLink}
         href="#portfolioModalB"
         data-toggle="modal"
       >
+        <i className="fa fa-plus fa-fw" aria-hidden="true" /> &nbsp;
         Add Link
       </button>);
 
@@ -234,13 +236,13 @@ class FolderContents extends React.Component {
           <ol className="breadcrumb">
             {path}
           </ol>
-          {addLinkBtn}
         </nav>
         <div
           className="list-group"
         >
           {fileDisplay}
           {linkDisplay}
+          {addLinkBtn}
         </div>
         <Player videoData={this.state.currentVideo} />
       </div>);
