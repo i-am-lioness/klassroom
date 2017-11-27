@@ -46,6 +46,8 @@ class LinkEditor extends React.Component {
       this.props.onAdd(linkData);
     }
     this.clearValues();
+
+    window.$('#portfolioModalB').modal('hide');
   }
 
   searchYoutube(e) {

@@ -58,6 +58,15 @@ function compareByTypeThenName(a, b) {
   return (a.name > b.name);
 }
 
+function smoothScroll(hash) {
+  const target = window.$(hash);
+  if (target.length) {
+    window.$('html, body').animate({
+      scrollTop: (target.offset().top - 48)
+    }, 1000, 'easeInOutExpo');
+  }
+}
+
 class FolderContents extends React.Component {
   constructor(props) {
     super(props);
@@ -94,6 +103,7 @@ class FolderContents extends React.Component {
       path,
     });
     this.props.navigateTo(folderID);
+    smoothScroll('#resources');
   }
 
   playVideo(currentVideo) {
@@ -114,7 +124,7 @@ class FolderContents extends React.Component {
     if (file.mimeType === mimeTypes.FOLDER) {
       contentLink = (
         <a
-          href={`#${file.name}`}
+          href="#resources"
           onClick={(e) => { this.navigate(file, e, -1); }}
         >
           <strong>{file.name}</strong>
@@ -192,7 +202,7 @@ class FolderContents extends React.Component {
     return (
       <li key={file.id} className="breadcrumb-item">
         <a
-          href={`#${file.name}`}
+          href="#resources"
           onClick={(e) => { this.navigate(file, e, idx); }}
         >
           {file.name}
