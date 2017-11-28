@@ -84,6 +84,7 @@ class FolderEditor extends React.Component {
               className="btn btn-primary btn-lg btn-block"
               href="#portfolioModalA"
               data-toggle="modal"
+              style={{ marginTop: 10 }}
             >
               Publish
             </a>

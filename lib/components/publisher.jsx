@@ -29,7 +29,7 @@ const stages = {
 };
 
 const REMOTE_HOST = 'https://github.com/nnennaude/chem_class1.git';
-const JS_BUNDLE = 'folder.web.bundle.js';
+const JS_BUNDLE = 'index.web.bundle.js';
 
 function goToSite(e) {
   e.preventDefault();
