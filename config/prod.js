@@ -8,7 +8,7 @@ module.exports = env => (
   {
     context: DEV,
     entry: {
-      folder: './folder.jsx',
+      index: './index.jsx',
     },
     resolve: {
       extensions: ['.js', '.jsx'],
