@@ -7,10 +7,22 @@ class Player extends React.Component {
     super(props);
 
     this.state = {
+      play: false,
     };
   }
 
+  componentDidMount() {
+    window.$('#portfolioModalC').on('hidden.bs.modal', (e) => {
+      this.setState({ play: false });
+    });
+    window.$('#portfolioModalC').on('show.bs.modal', (e) => {
+      this.setState({ play: true });
+    });
+  }
+
   render() {
+    const src = this.state.play ?
+      `https://www.youtube.com/embed/${this.props.videoData.videoID}?rel=0` : '';
     return (
       <div
         className="portfolio-modal modal fade"
@@ -36,7 +48,7 @@ class Player extends React.Component {
                       <iframe
                         title={this.props.videoData.name}
                         className="embed-responsive-item"
-                        src={`https://www.youtube.com/embed/${this.props.videoData.videoID}?rel=0`}
+                        src={src}
                         allowFullScreen
                       />
                     </div>
