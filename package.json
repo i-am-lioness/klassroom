@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-electron": "webpack --env=prod",
     "build-web": "webpack --env=web",
-    "build": "npm run build-web && npm run build-electron"
+    "build": "npm run build-web && npm run build-electron",
+    "start": "./node_modules/.bin/electron ."
   },
   "author": "Nnenna Udegbunam",
   "license": "ISC",
